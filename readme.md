@@ -16,7 +16,7 @@
 ## Install
 
 ```
-$ npm install --save-dev gulp-mocha
+$ npm install --save-dev sl-gulp-mocha
 ```
 
 
@@ -27,9 +27,15 @@ const gulp = require('gulp');
 const mocha = require('gulp-mocha');
 
 gulp.task('default', () =>
+	var slConfig = {
+			"tokenfile":"slToken.txt",
+			"buildsessionidfile":"buildSessionId",
+			"useslnode2":true,
+			"teststage":"Unit Tests"
+		};
 	gulp.src('test.js', {read: false})
-		// `gulp-mocha` needs filepaths so you can't have any plugins before it
-		.pipe(mocha({reporter: 'nyan'}))
+		// `sl-gulp-mocha` needs filepaths so you can't have any plugins before it
+		.pipe(mocha({}, slConfig))
 );
 ```
 
