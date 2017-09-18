@@ -14,7 +14,7 @@ const MULTIPLE_OPTS = new Set([
 	'require'
 ]);
 
-module.exports = opts => {
+module.exports = (opts, slopts) => {
 	opts = Object.assign({
 		colors: true,
 		suppress: false
@@ -39,11 +39,13 @@ module.exports = opts => {
 		ignoreFalse: true
 	});
 
+	const slArgs = dargs(slopts, {useEquals: false});
+
 	const files = [];
 
 	function aggregate(file, encoding, done) {
 		if (file.isStream()) {
-			done(new gutil.PluginError('gulp-mocha', 'Streaming not supported'));
+			done(new gutil.PluginError('sl-gulp-mocha', 'Streaming not supported'));
 			return;
 		}
 
@@ -52,19 +54,31 @@ module.exports = opts => {
 		done();
 	}
 
+	function getSlNodeJs(){
+		var path = require("path");
+		var slnodejs = path.join(process.cwd(), "node_modules",".bin","slnodejs");
+		return slnodejs;
+	}
+
 	function flush(done) {
 		const env = npmRunPath.env({cwd: __dirname});
-		const proc = execa('mocha', files.concat(args), {
+		
+		var slnodejs = getSlNodeJs();
+		var slnodejsArgs = ["mocha"].concat(slArgs).concat(["--"]);
+		var mochaArgs = files.concat(args);
+		var finalArgs = slnodejsArgs.concat(mochaArgs);
+
+		const proc = execa(slnodejs, finalArgs, {
 			env,
 			maxBuffer: HUNDRED_MEGABYTES
 		});
-
+		
 		proc.then(result => {
 			this.emit('_result', result);
 			done();
 		})
 			.catch(err => {
-				this.emit('error', new gutil.PluginError('gulp-mocha', err));
+				this.emit('error', new gutil.PluginError('sl-gulp-mocha', err));
 				done();
 			});
 
