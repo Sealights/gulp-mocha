@@ -1,7 +1,7 @@
 {
-  "name": "gulp-mocha",
-  "version": "4.3.1",
-  "description": "Run Mocha tests",
+  "name": "sl-gulp-mocha",
+  "version": "1.0.0",
+  "description": "Run Mocha tests using sealights",
   "license": "MIT",
   "repository": "sindresorhus/gulp-mocha",
   "author": {
